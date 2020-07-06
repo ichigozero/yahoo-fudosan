@@ -35,6 +35,21 @@ class RentListing(PropertyListing):
             'floor_number': self._extract_table_data('所在階')
         }
 
+        rent_data['facility'] = {
+            'features': self._extract_rent_features(),
+            'popular_items': self._extract_popular_facilities(),
+            'bath_toilet': self._extract_table_data('バス・トイレ'),
+            'kitchen': self._extract_table_data('キッチン'),
+            'storage': self._extract_table_data('収納'),
+            'porch': self._extract_table_data('ベランダ'),
+            'security': self._extract_table_data('セキュリティ'),
+            'facility': self._extract_table_data('設備'),
+            'room_position': self._extract_table_data('位置'),
+            'communication': self._extract_table_data('通信'),
+            'rent_condition': self._extract_table_data('入居条件'),
+            'other_facility': self._extract_table_data('その他'),
+        }
+
         return rent_data
 
     @_ignore_exceptions
@@ -71,6 +86,34 @@ class RentListing(PropertyListing):
             li_tag_copy = copy.copy(li_tag)
             li_tag_copy.extract()
             extract.append(li_tag_copy.get_text(strip=True))
+
+        return '|'.join(extract)
+
+    @_ignore_exceptions
+    def _extract_rent_features(self):
+        extract = []
+        li_tags = self._soup.find('ul', class_='listPict').find_all('li')
+
+        for li_tag in li_tags:
+            extract.append(li_tag.get_text(strip=True))
+
+        return '|'.join(extract)
+
+    @_ignore_exceptions
+    def _extract_popular_facilities(self):
+        extract = []
+        li_tags = (
+            self._soup
+            .find('ul', class_='listPict2')
+            .find_all('li', class_='')
+        )
+
+        for li_tag in li_tags:
+            # Prevent the tree from being modified
+            # after calling extract() method
+            tmp = copy.copy(li_tag)
+            tmp.extract()
+            extract.append(tmp.get_text(strip=True))
 
         return '|'.join(extract)
 
