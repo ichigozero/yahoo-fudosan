@@ -80,6 +80,7 @@ class RentListing(PropertyListing):
             .find_next_sibling('td')
             .find_all('li')
         )
+
         for li_tag in li_tags:
             # Prevent the tree from being modified
             # after calling extract() method
