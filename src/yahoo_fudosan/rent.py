@@ -82,8 +82,8 @@ class RentListing(PropertyListing):
         )
 
         for li_tag in li_tags:
-            # Prevent the tree from being modified
-            # after calling extract() method
+            # Prevent the original tree from being modified
+            # when calling extract() method
             li_tag_copy = copy.copy(li_tag)
             li_tag_copy.extract()
             extract.append(li_tag_copy.get_text(strip=True))
@@ -110,8 +110,8 @@ class RentListing(PropertyListing):
         )
 
         for li_tag in li_tags:
-            # Prevent the tree from being modified
-            # after calling extract() method
+            # Prevent the original tree from being modified
+            # when calling extract() method
             tmp = copy.copy(li_tag)
             tmp.extract()
             extract.append(tmp.get_text(strip=True))
