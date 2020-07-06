@@ -4,10 +4,8 @@ import time
 import pytest
 from bs4 import BeautifulSoup
 
-from yahoo_fudosan import (
-    PropertyListing,
-    RentListing,
-)
+from yahoo_fudosan import PropertyListing
+from yahoo_fudosan import RentListing
 
 
 def test_file(filename):
