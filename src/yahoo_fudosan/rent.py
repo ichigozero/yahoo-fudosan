@@ -1,3 +1,6 @@
+import copy
+import re
+
 from .property import PropertyListing
 
 
@@ -23,6 +26,15 @@ class RentListing(PropertyListing):
             'security_deposit': self._extract_other_rental_cost(1, 2),
         }
 
+        rent_data['summary'] = {
+            'location': self._extract_table_data('所在地'),
+            'access': self._extract_access_to_public_transport(),
+            'room_layout': self._extract_table_data('間取り'),
+            'build_date': self._extract_table_data('築年数（築年月）'),
+            'room_size': self._extract_table_data('専有面積'),
+            'floor_number': self._extract_table_data('所在階')
+        }
+
         return rent_data
 
     @_ignore_exceptions
@@ -41,5 +53,32 @@ class RentListing(PropertyListing):
             .find_all('dl', class_='priceData')[dl_tag_index]
             .find('dd', class_='sub')
             .find_all('span')[span_tag_index]
+            .get_text(strip=True)
+        )
+
+    @_ignore_exceptions
+    def _extract_access_to_public_transport(self):
+        extract = []
+        li_tags = (
+            self._soup
+            .find('th', string=re.compile('交通'))
+            .find_next_sibling('td')
+            .find_all('li')
+        )
+        for li_tag in li_tags:
+            # Prevent the tree from being modified
+            # after calling extract() method
+            li_tag_copy = copy.copy(li_tag)
+            li_tag_copy.extract()
+            extract.append(li_tag_copy.get_text(strip=True))
+
+        return '|'.join(extract)
+
+    @_ignore_exceptions
+    def _extract_table_data(self, row_header_title):
+        return (
+            self._soup
+            .find('th', string=re.compile(row_header_title))
+            .find_next_sibling('td')
             .get_text(strip=True)
         )
