@@ -2,8 +2,12 @@ import os
 import time
 
 import pytest
+from bs4 import BeautifulSoup
 
-from yahoo_fudosan import PropertyListing
+from yahoo_fudosan import (
+    PropertyListing,
+    RentListing,
+)
 
 
 def test_file(filename):
@@ -31,3 +35,11 @@ def rent_listing_html():
 @pytest.fixture
 def property_listing(rent_listing_html):
     return PropertyListing()
+
+
+@pytest.fixture
+def rent_listing(rent_listing_html):
+    listing = RentListing()
+    listing._soup = BeautifulSoup(rent_listing_html, 'html.parser')
+
+    return listing
