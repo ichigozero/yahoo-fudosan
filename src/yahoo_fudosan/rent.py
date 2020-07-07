@@ -54,6 +54,24 @@ class RentListing(PropertyListing):
             'other_facility': self._extract_table_data('その他'),
         }
 
+        rent_data['info'] = {
+           'category': self._extract_table_data('物件種目'),
+           'number_of_floors': self._extract_table_data('建物階'),
+           'azimuth': self._extract_table_data('方位'),
+           'building_structure': self._extract_table_data('構造'),
+           'has_deduction': self._extract_table_data('敷引'),
+           'has_parking': self._extract_table_data('駐車場'),
+           'has_insurance': self._extract_table_data('保険'),
+           'contract_period': self._extract_table_data('契約期間'),
+           'available_date': self._extract_table_data('入居可能時期'),
+           'misc_conditions': self._extract_table_data('条件等'),
+           'special_note': self._extract_table_data('特記事項'),
+           'discloser': self._extract_table_data('情報提供元'),
+           'disclose_date': self._extract_table_data('情報公開日'),
+           'update_date': self._extract_table_data('情報更新日'),
+           'next_update_date': self._extract_table_data('次回更新予定日')
+        }
+
         return rent_data
 
     @_ignore_exceptions

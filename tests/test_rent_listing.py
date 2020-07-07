@@ -86,3 +86,25 @@ def test_extract_rent_data(rent_listing):
         rent_data['facility']['other_facility'],
         '仲介手数料無料 / 10畳以上'
     )
+
+    check.equal(rent_data['info']['category'], 'マンション')
+    check.equal(rent_data['info']['number_of_floors'], '地上4階建て')
+    check.equal(rent_data['info']['azimuth'], '南東')
+    check.equal(rent_data['info']['building_structure'], '鉄筋コンクリート')
+    check.equal(rent_data['info']['has_deduction'], 'なし')
+    check.equal(rent_data['info']['has_parking'], '-')
+    check.equal(rent_data['info']['has_insurance'], 'あり 2年 26,000円')
+    check.equal(rent_data['info']['contract_period'], '-')
+    check.equal(rent_data['info']['available_date'], '指定有 2020年7月')
+    check.equal(rent_data['info']['misc_conditions'], '-')
+    check.equal(
+        rent_data['info']['special_note'],
+        (
+            '日当たり良好 / 24時間換気システム / '
+            '角部屋 / 仲介手数料無料'
+        )
+    )
+    check.equal(rent_data['info']['discloser'], 'リクルート')
+    check.equal(rent_data['info']['disclose_date'], '2020年6月14日')
+    check.equal(rent_data['info']['update_date'], '2020年6月14日')
+    check.equal(rent_data['info']['next_update_date'], '随時')
