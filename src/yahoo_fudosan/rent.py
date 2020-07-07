@@ -20,10 +20,14 @@ class RentListing(PropertyListing):
 
         rent_data['cost'] = {
             'rent_price': self._extract_rent_price(),
-            'monthly_fee': self._extract_other_rental_cost(0, 0),
-            'bond_deposit': self._extract_other_rental_cost(1, 0),
-            'key_money': self._extract_other_rental_cost(1, 1),
-            'security_deposit': self._extract_other_rental_cost(1, 2),
+            'monthly_fee': self._extract_other_rental_cost(
+                dl_tag_index=0, span_tag_index=0),
+            'bond_deposit': self._extract_other_rental_cost(
+                dl_tag_index=1, span_tag_index=0),
+            'key_money': self._extract_other_rental_cost(
+                dl_tag_index=1, span_tag_index=1),
+            'security_deposit': self._extract_other_rental_cost(
+                dl_tag_index=1, span_tag_index=2),
         }
 
         rent_data['summary'] = {
