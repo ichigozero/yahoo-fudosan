@@ -72,6 +72,8 @@ class RentListing(PropertyListing):
            'next_update_date': self._extract_table_data('次回更新予定日')
         }
 
+        rent_data['url'] = self._requested_url
+
         return rent_data
 
     @_ignore_exceptions

@@ -1,7 +1,7 @@
 import pytest_check as check
 
 
-def test_extract_rent_data(rent_listing):
+def test_extract_rent_data(rent_listing, dummy_url):
     rent_data = rent_listing.extract_rent_data()
 
     check.equal(rent_data['cost']['rent_price'], '18.5万円')
@@ -108,3 +108,5 @@ def test_extract_rent_data(rent_listing):
     check.equal(rent_data['info']['disclose_date'], '2020年6月14日')
     check.equal(rent_data['info']['update_date'], '2020年6月14日')
     check.equal(rent_data['info']['next_update_date'], '随時')
+
+    check.equal(rent_data['url'], dummy_url)

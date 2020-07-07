@@ -26,6 +26,11 @@ def sleep_mock(monkeypatch):
 
 
 @pytest.fixture(scope='module')
+def dummy_url():
+    return 'http://localhost'
+
+
+@pytest.fixture(scope='module')
 def rent_listing_html():
     return test_file('rent_listing.html').encode('utf-8')
 
@@ -36,8 +41,9 @@ def property_listing(rent_listing_html):
 
 
 @pytest.fixture
-def rent_listing(rent_listing_html):
+def rent_listing(rent_listing_html, dummy_url):
     listing = RentListing()
     listing._soup = BeautifulSoup(rent_listing_html, 'html.parser')
+    listing._requested_url = dummy_url
 
     return listing
