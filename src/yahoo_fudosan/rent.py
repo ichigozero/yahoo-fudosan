@@ -116,13 +116,10 @@ class RentListing(PropertyListing):
 
     @_ignore_exceptions
     def _extract_rent_features(self):
-        extract = []
         li_tags = self._soup.find('ul', class_='listPict').find_all('li')
+        extracts = [li_tag.get_text(strip=True) for li_tag in li_tags]
 
-        for li_tag in li_tags:
-            extract.append(li_tag.get_text(strip=True))
-
-        return '|'.join(extract)
+        return '|'.join(extracts)
 
     @_ignore_exceptions
     def _extract_popular_facilities(self):
