@@ -20,6 +20,21 @@ class HouseListing(PropertyListing):
             'house_location': self._extract_house_location(),
             'access': self._extract_access_to_public_transport(),
             'house_layout': self._extract_table_data('間取り'),
+            'land_size': self._extract_other_table_data('土地面積'),
+            'house_size': self._extract_other_table_data('建物面積'),
+            'building_to_floor_ratio': (
+                self._extract_other_table_data('建ぺい率/容積率')),
+            'completion_date': self._extract_other_table_data('完成時期'),
+            'available_date': self._extract_other_table_data('入居可能時期'),
+            'connecting_road': self._extract_other_table_data('接道'),
+            'road_contribution': self._extract_other_table_data('私道負担'),
+            'number_of_floors': self._extract_other_table_data('建物階'),
+            'building_status': self._extract_other_table_data('建物状況'),
+            'building_condition': self._extract_other_table_data('建物現況'),
+            'use_district': self._extract_other_table_data('用途地域'),
+            'house_structure': self._extract_other_table_data('構造・工法'),
+            'land_rights': self._extract_other_table_data('土地権利形態'),
+            'has_parking': self._extract_other_table_data('駐車場・車庫'),
         }
 
     @_ignore_exceptions
@@ -51,6 +66,23 @@ class HouseListing(PropertyListing):
             .find_next_sibling('td')
             .get_text(strip=True)
         )
+
+    @_ignore_exceptions
+    def _extract_other_table_data(self, row_header_title):
+        found_tag = self._soup.find('th', string=re.compile(row_header_title))
+        if found_tag:
+            return (
+                found_tag
+                .find_next_sibling('td')
+                .get_text(strip=True)
+            )
+        else:
+            return (
+                self._soup
+                .find('dt', string=re.compile(row_header_title))
+                .find_next_sibling('dd')
+                .get_text(strip=True)
+            )
 
     @_ignore_exceptions
     def _extract_access_to_public_transport(self):

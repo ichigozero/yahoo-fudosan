@@ -15,6 +15,23 @@ def test_extract_house_data(house_listing_ag):
         )
     )
     check.equal(house_data['house_layout'], '4LDK')
+    check.equal(house_data['land_size'], '133.77m2（登記）')
+    check.equal(house_data['house_size'], '101.02m2（登記）')
+    check.equal(
+        house_data['building_to_floor_ratio'],
+        '建ぺい率：60/容積率：200'
+    )
+    check.equal(house_data['completion_date'], '2020年8月予定')
+    check.equal(house_data['available_date'], '2020年8月下旬予定')
+    check.equal(house_data['connecting_road'], '一方')
+    check.equal(house_data['road_contribution'], '私道負担:なし')
+    check.equal(house_data['number_of_floors'], '地上2階建')
+    check.equal(house_data['building_status'], '未入居')
+    check.equal(house_data['building_condition'], '未完成')
+    check.equal(house_data['use_district'], '第一種中高層住居専用地域')
+    check.equal(house_data['house_structure'], '木造')
+    check.equal(house_data['land_rights'], '所有権のみ')
+    check.equal(house_data['has_parking'], '有')
 
 
 def test_extract_alternative_house_data(house_listing_corp):
@@ -31,3 +48,20 @@ def test_extract_alternative_house_data(house_listing_corp):
         )
     )
     check.equal(house_data['house_layout'], '3LDK')
+    check.equal(house_data['land_size'], '100.3m2（登記）')
+    check.equal(house_data['house_size'], '92.74m2（登記）')
+    check.equal(
+        house_data['building_to_floor_ratio'],
+        '建ぺい率：50％/容積率：150％'
+    )
+    check.equal(house_data['completion_date'], '2020年5月竣工済み')
+    check.equal(house_data['available_date'], '即入居可')
+    check.equal(house_data['connecting_road'], '一方（北東 私道 幅員5.0m）')
+    check.equal(house_data['road_contribution'], '無し')
+    check.equal(house_data['number_of_floors'], '地上2階建')
+    check.equal(house_data['building_status'], '新築')
+    check.equal(house_data['building_condition'], '完成済み')
+    check.equal(house_data['use_district'], '第一種低層住居専用地域 (市街化)')
+    check.equal(house_data['house_structure'], '木造')
+    check.equal(house_data['land_rights'], '所有権のみ')
+    check.equal(house_data['has_parking'], '有')
