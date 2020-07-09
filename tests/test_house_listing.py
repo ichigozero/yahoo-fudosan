@@ -32,6 +32,10 @@ def test_extract_house_data(house_listing_ag):
     check.equal(house_data['house_structure'], '木造')
     check.equal(house_data['land_rights'], '所有権のみ')
     check.equal(house_data['has_parking'], '有')
+    check.equal(
+        house_data['house_facilities'],
+        '設計住宅性能評価付き|駐車場2台以上|床下収納'
+    )
 
 
 def test_extract_alternative_house_data(house_listing_corp):
@@ -65,3 +69,18 @@ def test_extract_alternative_house_data(house_listing_corp):
     check.equal(house_data['house_structure'], '木造')
     check.equal(house_data['land_rights'], '所有権のみ')
     check.equal(house_data['has_parking'], '有')
+    check.equal(
+        house_data['house_facilities'],
+        (
+            '分譲地内|'
+            '平坦地|'
+            '床暖房|'
+            'トイレ２か所|'
+            'リビングダイニング15畳以上|'
+            '独立型キッチン|'
+            '対面キッチン|'
+            '浴室乾燥機あり|'
+            'ウォークインクローゼット|'
+            '床下収納'
+        )
+    )

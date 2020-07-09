@@ -35,6 +35,7 @@ class HouseListing(PropertyListing):
             'house_structure': self._extract_other_table_data('構造・工法'),
             'land_rights': self._extract_other_table_data('土地権利形態'),
             'has_parking': self._extract_other_table_data('駐車場・車庫'),
+            'house_facilities': self._extract_house_facilities(),
         }
 
     @_ignore_exceptions
@@ -97,4 +98,15 @@ class HouseListing(PropertyListing):
         li_tags = found_tag.find_next_sibling('td').find_all('li')
         extracts = [li_tag.get_text(strip=True) for li_tag in li_tags]
 
+        return '|'.join(extracts)
+
+    @_ignore_exceptions
+    def _extract_house_facilities(self):
+        ul_tag = self._soup.find('ul', class_='DetailFacility')
+        if not ul_tag:
+            ul_tag = self._soup.find('ul', class_='listPictRow')
+
+        extracts = [
+            li_tag.get_text(strip=True) for li_tag in ul_tag.find_all('li')
+        ]
         return '|'.join(extracts)
