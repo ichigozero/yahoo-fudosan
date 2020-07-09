@@ -14,6 +14,7 @@ def test_extract_house_data(house_listing_ag):
             '東葉高速鉄道 「飯山満」駅 徒歩32分'
         )
     )
+    check.equal(house_data['house_layout'], '4LDK')
 
 
 def test_extract_alternative_house_data(house_listing_corp):
@@ -29,3 +30,4 @@ def test_extract_alternative_house_data(house_listing_corp):
             '新京成電鉄 「前原」駅 徒歩25分'
         )
     )
+    check.equal(house_data['house_layout'], '3LDK')

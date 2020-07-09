@@ -19,6 +19,7 @@ class HouseListing(PropertyListing):
             'house_price': self._extract_house_price(),
             'house_location': self._extract_house_location(),
             'access': self._extract_access_to_public_transport(),
+            'house_layout': self._extract_table_data('間取り'),
         }
 
     @_ignore_exceptions
