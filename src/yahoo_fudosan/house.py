@@ -18,6 +18,7 @@ class HouseListing(PropertyListing):
         return {
             'house_price': self._extract_house_price(),
             'house_location': self._extract_house_location(),
+            'access': self._extract_access_to_public_transport(),
         }
 
     @_ignore_exceptions
@@ -49,3 +50,18 @@ class HouseListing(PropertyListing):
             .find_next_sibling('td')
             .get_text(strip=True)
         )
+
+    @_ignore_exceptions
+    def _extract_access_to_public_transport(self):
+        found_tag = self._soup.find('th', string=re.compile('交通'))
+        if not found_tag:
+            found_tag = (
+                self._soup
+                .find('span', string=re.compile('交通'))
+                .parent
+            )
+
+        li_tags = found_tag.find_next_sibling('td').find_all('li')
+        extracts = [li_tag.get_text(strip=True) for li_tag in li_tags]
+
+        return '|'.join(extracts)
