@@ -36,6 +36,7 @@ class HouseListing(PropertyListing):
             'land_rights': self._extract_other_table_data('土地権利形態'),
             'has_parking': self._extract_other_table_data('駐車場・車庫'),
             'house_facilities': self._extract_house_facilities(),
+            'url': self._requested_url
         }
 
     @_ignore_exceptions

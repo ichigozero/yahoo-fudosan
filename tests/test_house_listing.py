@@ -1,7 +1,7 @@
 import pytest_check as check
 
 
-def test_extract_house_data(house_listing_ag):
+def test_extract_house_data(house_listing_ag, dummy_url):
     house_data = house_listing_ag.extract_house_data()
 
     check.equal(house_data['house_price'], '2,580万円')
@@ -36,9 +36,10 @@ def test_extract_house_data(house_listing_ag):
         house_data['house_facilities'],
         '設計住宅性能評価付き|駐車場2台以上|床下収納'
     )
+    check.equal(house_data['url'], dummy_url)
 
 
-def test_extract_alternative_house_data(house_listing_corp):
+def test_extract_alternative_house_data(house_listing_corp, dummy_url):
     house_data = house_listing_corp.extract_house_data()
 
     check.equal(house_data['house_price'], '3,880万円')
@@ -84,3 +85,4 @@ def test_extract_alternative_house_data(house_listing_corp):
             '床下収納'
         )
     )
+    check.equal(house_data['url'], dummy_url)
