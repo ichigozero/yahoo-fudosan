@@ -1,7 +1,12 @@
 import copy
 import re
+import time
+
+from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import TimeoutException
 
 from .property import PropertyListing
+from .property import PropertySearch
 
 
 def _ignore_exceptions(function):
@@ -12,6 +17,75 @@ def _ignore_exceptions(function):
             return ''
 
     return wrapper
+
+
+class RentSearch(PropertySearch):
+    def fetch_page(self, url, retry_count=0, max_retry=0, retry_delay=0):
+        try:
+            self._webdriver.get(url)
+
+            if self._is_page_target_page():
+                self._unhide_hidden_rent_listing_hyperlinks()
+                self._page_is_ready = True
+        except TimeoutException:
+            if retry_count < max_retry:
+                time.sleep(retry_delay)
+                self.fetch_page(url, retry_count + 1, max_retry, retry_delay)
+            else:
+                self._page_is_ready = False
+
+    def _is_page_target_page(self):
+        try:
+            self._webdriver.find_element_by_css_selector('h1.ttlLarge2')
+            return True
+        except (AttributeError, NoSuchElementException):
+            return False
+
+    def _unhide_hidden_rent_listing_hyperlinks(self):
+        try:
+            css = 'a.icon.iconPlus.rapidnofollow'
+            for a_tag in self._webdriver.find_elements_by_css_selector(css):
+                a_tag.click()
+                time.sleep(1)
+        except (AttributeError, NoSuchElementException):
+            pass
+
+    def extract_search_result_count(self):
+        try:
+            css = 'div.toolSelect6 > p.number > span'
+            return int(
+                self._webdriver
+                .find_element_by_css_selector(css)
+                .text
+                .replace(',', '')
+            )
+        except (AttributeError, NoSuchElementException):
+            return 0
+
+    def extract_rent_listing_urls(self):
+        try:
+            a_tags = (
+                self._webdriver
+                .find_elements_by_css_selector('a.detailLink')
+            )
+            for a_tag in a_tags:
+                yield a_tag.get_attribute('href')
+        except (AttributeError, NoSuchElementException):
+            return None
+
+    def extract_next_page_url(self):
+        try:
+            li_tags = (
+                self._webdriver
+                .find_elements_by_css_selector('li.Pagination__item')
+            )
+            return (
+                li_tags[-1]
+                .find_element_by_css_selector('a')
+                .get_attribute('href')
+            )
+        except (AttributeError, NoSuchElementException):
+            return ''
 
 
 class RentListing(PropertyListing):
