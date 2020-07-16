@@ -56,7 +56,7 @@ class RentSearch(PropertySearch):
             for a_tag in a_tags:
                 yield a_tag.get_attribute('href')
         except (AttributeError, NoSuchElementException):
-            return []
+            return None
 
     def extract_next_page_url(self):
         try:
