@@ -34,7 +34,9 @@ def rent_search(rent_search_uri):
         return options
 
     search = RentSearch()
-    # Chromium works for single test but throws error on multi tests
+    # Chromium works for single test but throws error on multi tests.
+    # Test should  be performed without internet connections
+    # since Firefox will try to fetch updated page
     search._webdriver = webdriver.Firefox(options=_get_firefox_options())
     search._webdriver.get(rent_search_uri)
     yield search
