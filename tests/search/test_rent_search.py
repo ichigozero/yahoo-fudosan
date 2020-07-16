@@ -1,6 +1,26 @@
 import time
 
 
+def test_fetch_page(monkeypatch, mocker, rent_search, rent_search_uri):
+    def _mock_function(*args, **kwargs):
+        pass
+
+    monkeypatch.setattr(
+        rent_search,
+        '_unhide_hidden_rent_listing_hyperlinks',
+        _mock_function
+    )
+    spy = mocker.spy(
+        rent_search,
+        '_unhide_hidden_rent_listing_hyperlinks'
+    )
+
+    rent_search.fetch_page(rent_search_uri)
+
+    spy.assert_called_once()
+    assert rent_search._page_is_ready is True
+
+
 def test_is_page_target_page(rent_search):
     assert rent_search._is_page_target_page() is True
 

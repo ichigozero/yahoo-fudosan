@@ -8,6 +8,7 @@ from selenium import webdriver
 class PropertySearch:
     def __init__(self):
         self._webdriver = None
+        self._page_is_ready = False
 
     def launch_browser(self):
         def _get_chrome_options():

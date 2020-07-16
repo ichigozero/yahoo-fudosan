@@ -3,6 +3,7 @@ import re
 import time
 
 from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import TimeoutException
 
 from .property import PropertyListing
 from .property import PropertySearch
@@ -19,6 +20,20 @@ def _ignore_exceptions(function):
 
 
 class RentSearch(PropertySearch):
+    def fetch_page(self, url, retry_count=0, max_retry=0, retry_delay=0):
+        try:
+            self._webdriver.get(url)
+
+            if self._is_page_target_page():
+                self._unhide_hidden_rent_listing_hyperlinks()
+                self._page_is_ready = True
+        except TimeoutException:
+            if retry_count < max_retry:
+                time.sleep(retry_delay)
+                self.fetch_page(url, retry_count + 1, max_retry, retry_delay)
+            else:
+                self._page_is_ready = False
+
     def _is_page_target_page(self):
         try:
             self._webdriver.find_element_by_css_selector('h1.ttlLarge2')
