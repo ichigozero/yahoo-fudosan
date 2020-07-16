@@ -1,5 +1,4 @@
 import os
-import time
 
 import pytest
 from bs4 import BeautifulSoup
@@ -16,14 +15,6 @@ def test_file(filename):
     )
     with open(os.path.join(path, filename), 'r') as f:
         return f.read()
-
-
-@pytest.fixture
-def sleep_mock(monkeypatch):
-    def sleep(seconds):
-        pass
-
-    monkeypatch.setattr(time, 'sleep', sleep)
 
 
 @pytest.fixture(scope='module')

@@ -1,5 +1,19 @@
+import time
+
+
 def test_is_page_target_page(rent_search):
     assert rent_search._is_page_target_page() is True
+
+
+def test_unhide_hidden_rent_listing_hyperlinks(
+        sleep_mock,
+        mocker,
+        rent_search
+):
+    spy = mocker.spy(time, 'sleep')
+    rent_search._unhide_hidden_rent_listing_hyperlinks()
+
+    assert spy.call_count == 4
 
 
 def test_page_is_not_target_page(rent_search, error_page_uri):

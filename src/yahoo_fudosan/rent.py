@@ -1,5 +1,6 @@
 import copy
 import re
+import time
 
 from selenium.common.exceptions import NoSuchElementException
 
@@ -24,6 +25,15 @@ class RentSearch(PropertySearch):
             return True
         except (AttributeError, NoSuchElementException):
             return False
+
+    def _unhide_hidden_rent_listing_hyperlinks(self):
+        try:
+            css = 'a.icon.iconPlus.rapidnofollow'
+            for a_tag in self._webdriver.find_elements_by_css_selector(css):
+                a_tag.click()
+                time.sleep(1)
+        except (AttributeError, NoSuchElementException):
+            pass
 
     def extract_search_result_count(self):
         try:
