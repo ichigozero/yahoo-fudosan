@@ -1,7 +1,10 @@
 import copy
 import re
 
+from selenium.common.exceptions import NoSuchElementException
+
 from .property import PropertyListing
+from .property import PropertySearch
 
 
 def _ignore_exceptions(function):
@@ -12,6 +15,15 @@ def _ignore_exceptions(function):
             return ''
 
     return wrapper
+
+
+class RentSearch(PropertySearch):
+    def _is_page_target_page(self):
+        try:
+            self._webdriver.find_element_by_css_selector('h1.ttlLarge2')
+            return True
+        except (AttributeError, NoSuchElementException):
+            return False
 
 
 class RentListing(PropertyListing):
