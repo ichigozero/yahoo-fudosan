@@ -26,7 +26,7 @@ def rent_search_uri():
 
 
 @pytest.fixture(scope='module')
-def rent_search():
+def rent_search(rent_search_uri):
     def _get_firefox_options():
         options = webdriver.firefox.options.Options()
         options.headless = True
@@ -36,5 +36,6 @@ def rent_search():
     search = RentSearch()
     # Chromium works for single test but throws error on multi tests
     search._webdriver = webdriver.Firefox(options=_get_firefox_options())
+    search._webdriver.get(rent_search_uri)
     yield search
     search._webdriver.quit()

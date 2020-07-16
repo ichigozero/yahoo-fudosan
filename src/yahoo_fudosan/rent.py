@@ -25,6 +25,18 @@ class RentSearch(PropertySearch):
         except (AttributeError, NoSuchElementException):
             return False
 
+    def extract_search_result_count(self):
+        try:
+            css = 'div.toolSelect6 > p.number > span'
+            return int(
+                self._webdriver
+                .find_element_by_css_selector(css)
+                .text
+                .replace(',', '')
+            )
+        except (AttributeError, NoSuchElementException):
+            return 0
+
 
 class RentListing(PropertyListing):
     def extract_rent_data(self):
