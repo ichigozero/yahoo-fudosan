@@ -14,3 +14,20 @@ def test_page_is_not_target_page(rent_search, error_page_uri):
 
 def test_extract_searchresult_count(rent_search):
     assert rent_search.extract_search_result_count() == 9859
+
+
+def test_extract_rent_listing_urls(rent_search):
+    first_url = last_url = next(rent_search.extract_rent_listing_urls())
+
+    for last_url in rent_search.extract_rent_listing_urls():
+        pass
+
+    assert (
+        '/rent/detail/'
+        '00000103535703e80fc7d1a5efa469728314ab34e79d/'
+    ) in first_url
+
+    assert (
+        '/rent/detail/'
+        '_000002895183574e6287fcfba5d82460ef3dc8bacb0d/_0301525842/'
+    ) in last_url

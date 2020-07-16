@@ -37,6 +37,17 @@ class RentSearch(PropertySearch):
         except (AttributeError, NoSuchElementException):
             return 0
 
+    def extract_rent_listing_urls(self):
+        try:
+            elements = (
+                self._webdriver
+                .find_elements_by_css_selector('a.detailLink')
+            )
+            for element in elements:
+                yield element.get_attribute('href')
+        except (AttributeError, NoSuchElementException):
+            return []
+
 
 class RentListing(PropertyListing):
     def extract_rent_data(self):
