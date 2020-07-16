@@ -31,3 +31,10 @@ def test_extract_rent_listing_urls(rent_search):
         '/rent/detail/'
         '_000002895183574e6287fcfba5d82460ef3dc8bacb0d/_0301525842/'
     ) in last_url
+
+
+def test_extract_next_page_url(rent_search):
+    output = rent_search.extract_next_page_url()
+    expected = '/rent/search/03/13/13109/?page=2'
+
+    assert expected in output

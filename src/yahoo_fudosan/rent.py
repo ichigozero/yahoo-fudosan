@@ -48,6 +48,20 @@ class RentSearch(PropertySearch):
         except (AttributeError, NoSuchElementException):
             return []
 
+    def extract_next_page_url(self):
+        try:
+            li_tags = (
+                self._webdriver
+                .find_elements_by_css_selector('li.Pagination__item')
+            )
+            return (
+                li_tags[-1]
+                .find_element_by_css_selector('a')
+                .get_attribute('href')
+            )
+        except (AttributeError, NoSuchElementException):
+            return ''
+
 
 class RentListing(PropertyListing):
     def extract_rent_data(self):
