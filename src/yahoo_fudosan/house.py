@@ -2,6 +2,7 @@ import re
 import time
 
 from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import TimeoutException
 
 from .property import PropertyListing
 from .property import PropertySearch
@@ -18,6 +19,28 @@ def _ignore_exceptions(function):
 
 
 class HouseSearch(PropertySearch):
+    def fetch_page(
+            self,
+            url,
+            retry_count=0,
+            max_retry=0,
+            retry_delay=0,
+            scroll_pause_time=5,
+    ):
+        try:
+            self._webdriver.get(url)
+            # The fetched page is a SPA (Single Page Application).
+            # Page must be scrolled up to the end to reveal
+            # all house listing URLs.
+            self._scroll_to_end_of_page(scroll_pause_time)
+            self._page_is_ready = True
+        except TimeoutException:
+            if retry_count < max_retry:
+                time.sleep(retry_delay)
+                self.fetch_page(url, retry_count + 1, max_retry, retry_delay)
+            else:
+                self._page_is_ready = False
+
     @_ignore_exceptions
     def _scroll_to_end_of_page(self, scroll_pause_time=5):
         def _get_page_scroll_height():
