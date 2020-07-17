@@ -1,4 +1,5 @@
 import re
+import time
 
 from selenium.common.exceptions import NoSuchElementException
 
@@ -17,6 +18,27 @@ def _ignore_exceptions(function):
 
 
 class HouseSearch(PropertySearch):
+    @_ignore_exceptions
+    def _scroll_to_end_of_page(self, scroll_pause_time=5):
+        def _get_page_scroll_height():
+            return (
+                self._webdriver
+                .execute_script('return document.body.scrollHeight')
+            )
+
+        last_scroll_height = _get_page_scroll_height()
+
+        while True:
+            self._webdriver.execute_script(
+                'window.scrollTo(0, document.body.scrollHeight);')
+
+            time.sleep(scroll_pause_time)
+
+            new_scroll_height = _get_page_scroll_height()
+            if new_scroll_height == last_scroll_height:
+                break
+            last_scroll_height = new_scroll_height
+
     def extract_search_result_count(self):
         try:
             return int(

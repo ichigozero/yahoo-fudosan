@@ -1,3 +1,10 @@
+def test_scroll_to_end_of_page(mocker, house_search):
+    spy = mocker.spy(house_search._webdriver, 'execute_script')
+    house_search._scroll_to_end_of_page(scroll_pause_time=0)
+
+    assert spy.call_count == 3
+
+
 def test_extract_searchresult_count(house_search):
     assert house_search.extract_search_result_count() == 22
 
