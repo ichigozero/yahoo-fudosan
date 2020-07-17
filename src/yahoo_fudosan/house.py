@@ -27,6 +27,18 @@ class HouseSearch(PropertySearch):
         except (AttributeError, NoSuchElementException):
             return 0
 
+    def extract_house_listing_urls(self):
+        try:
+            css = 'a.ListBuildingTypeA__summary'
+            a_tags = (
+                self._webdriver
+                .find_elements_by_css_selector(css)
+            )
+            for a_tag in a_tags:
+                yield a_tag.get_attribute('href')
+        except (AttributeError, NoSuchElementException):
+            return None
+
 
 class HouseListing(PropertyListing):
     def extract_house_data(self):
