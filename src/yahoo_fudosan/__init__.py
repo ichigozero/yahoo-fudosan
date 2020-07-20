@@ -1,3 +1,4 @@
+from .category import CategorySearch
 from .house import HouseSearch
 from .house import HouseListing
 from .property import PropertyListing

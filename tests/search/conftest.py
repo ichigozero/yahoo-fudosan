@@ -3,6 +3,7 @@ import os
 import pytest
 from selenium import webdriver
 
+from yahoo_fudosan import CategorySearch
 from yahoo_fudosan import HouseSearch
 from yahoo_fudosan import RentSearch
 
@@ -45,6 +46,11 @@ def rent_search_uri():
 
 
 @pytest.fixture(scope='module')
+def category_search_uri():
+    return test_file_uri('category_search.html')
+
+
+@pytest.fixture(scope='module')
 def house_search(house_search_uri):
     search = HouseSearch()
     search._webdriver = firefox_webdriver()
@@ -58,5 +64,14 @@ def rent_search(rent_search_uri):
     search = RentSearch()
     search._webdriver = firefox_webdriver()
     search._webdriver.get(rent_search_uri)
+    yield search
+    search._webdriver.quit()
+
+
+@pytest.fixture(scope='module')
+def category_search(category_search_uri):
+    search = CategorySearch()
+    search._webdriver = firefox_webdriver()
+    search._webdriver.get(category_search_uri)
     yield search
     search._webdriver.quit()
