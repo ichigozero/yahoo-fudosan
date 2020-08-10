@@ -6,9 +6,13 @@ import urllib.parse
 
 import click
 
+from .category import CategorySearch
 from .rent import RentListing
 from .rent import RentSearch
 from .csv import CsvExporter
+
+
+HOSTNAME = 'https://realestate.yahoo.co.jp'
 
 
 @click.group()
@@ -19,6 +23,43 @@ def cmd():
 @cmd.group()
 def rent():
     pass
+
+
+@rent.command()
+@click.option('--pause', '-p', default=5)
+@click.option('--max_retry', '-m', default=10)
+@click.option('--output_dir', '-o', default=os.getcwd())
+@click.argument('rent_category_search_url')
+def listing_urls_batch(
+        pause,
+        max_retry,
+        output_dir,
+        rent_category_search_url
+):
+    category_search = CategorySearch()
+    category_search.launch_browser()
+    category_search.fetch_page(
+        url=rent_category_search_url,
+        max_retry=max_retry,
+        retry_delay=pause
+    )
+    pages = category_search.extract_property_search_pages()
+
+    for index, page in enumerate(pages, start=1):
+        rent_search_url = urllib.parse.urljoin(HOSTNAME, page.url)
+        output_path = os.path.join(
+            output_dir,
+            'rent_{}.pkl'.format(page.title)
+        )
+
+        scrape_rent_listing_urls_to_pickle(
+            pause=pause,
+            max_retry=max_retry,
+            rent_search_url=rent_search_url,
+            output_path=output_path,
+            file_count=len(pages),
+            file_counter=index
+        )
 
 
 @rent.command()
@@ -51,8 +92,6 @@ def scrape_rent_listing_urls_to_pickle(
     )
 
     with click.progressbar(length=100, label=progress_label) as bar:
-        HOSTNAME = 'https://realestate.yahoo.co.jp'
-
         rent_search = RentSearch()
         rent_search.launch_browser()
 
