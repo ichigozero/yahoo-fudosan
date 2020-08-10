@@ -51,3 +51,10 @@ class PropertyListing:
                 self._soup = None
 
         self._requested_url = url
+
+    def is_fetched_page_an_error_page(self):
+        try:
+            h1_text = self._soup.find('h1').get_text(strip=True)
+            return '表示できません' in h1_text
+        except AttributeError:
+            return False
