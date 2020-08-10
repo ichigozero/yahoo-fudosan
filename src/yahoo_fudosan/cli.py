@@ -2,10 +2,12 @@ import csv
 import os
 import time
 import pickle
+import urllib.parse
 
 import click
 
 from .rent import RentListing
+from .rent import RentSearch
 from .csv import CsvExporter
 
 
@@ -20,11 +22,91 @@ def rent():
 
 
 @rent.command()
+@click.option('--pause', '-p', default=5)
+@click.option('--max_retry', '-m', default=10)
+@click.argument('rent_search_url')
+@click.argument('output_path')
+def listing_urls(pause, max_retry, rent_search_url, output_path):
+    scrape_rent_listing_urls_to_pickle(
+        pause=pause,
+        max_retry=max_retry,
+        rent_search_url=rent_search_url,
+        output_path=output_path
+    )
+
+
+def scrape_rent_listing_urls_to_pickle(
+    pause,
+    max_retry,
+    rent_search_url,
+    output_path,
+    file_count=1,
+    file_counter=1
+):
+    progress_label = '({file_counter}/{file_count}) {output_file_name}'
+    progress_label = progress_label.format(
+        file_counter=file_counter,
+        file_count=file_count,
+        output_file_name=os.path.split(output_path)[1]
+    )
+
+    with click.progressbar(length=100, label=progress_label) as bar:
+        HOSTNAME = 'https://realestate.yahoo.co.jp'
+
+        rent_search = RentSearch()
+        rent_search.launch_browser()
+
+        rent_listing_urls = []
+        total_progress = 0
+        has_page_to_scrape = True
+
+        while has_page_to_scrape:
+            rent_search.fetch_page(
+                url=rent_search_url,
+                max_retry=max_retry,
+                retry_delay=pause
+            )
+
+            if not rent_search._page_is_ready:
+                print('Unable to fetch {}'.format(rent_search_url))
+                print('Terminating...')
+                break
+
+            for url in rent_search.extract_rent_listing_urls():
+                rent_listing_urls.append(urllib.parse.urljoin(HOSTNAME, url))
+
+            rent_search_url = rent_search.extract_next_page_url()
+            if rent_search_url:
+                rent_search_url = urllib.parse.urljoin(
+                    HOSTNAME,
+                    rent_search_url
+                )
+                fetched_url_count = len(rent_listing_urls)
+                total_url_count = rent_search.extract_search_result_count()
+
+                new_total_progress = int(
+                    round(fetched_url_count / total_url_count * 100))
+                progress_increment = new_total_progress - total_progress
+                total_progress = new_total_progress
+
+                bar.update(progress_increment)
+                time.sleep(pause)
+            else:
+                has_page_to_scrape = False
+                bar.update(100 - total_progress)
+
+        rent_search.quit_browser()
+
+        with open(output_path, 'wb') as file:
+            pickle.dump(obj=rent_listing_urls, file=file)
+
+
+@rent.command()
 @click.option('--pause', '-p', default=10)
 @click.option('--max_retry', '-m', default=10)
 @click.argument('input_path')
 @click.argument('output_path')
-def listing(pause, max_retry, input_path, output_path):
+def listing_data(pause, max_retry, input_path, output_path):
     scrape_rent_listing_data_to_csv(
         pause=pause,
         max_retry=max_retry,
@@ -39,7 +121,7 @@ def listing(pause, max_retry, input_path, output_path):
 @click.option('--prefix', '-P', default='rent_')
 @click.option('--input_dir', '-i', default=os.getcwd())
 @click.option('--output_dir', '-o', default=os.getcwd())
-def listing_batch(pause, max_retry, prefix, input_dir, output_dir):
+def listing_data_batch(pause, max_retry, prefix, input_dir, output_dir):
     input_file_names = []
 
     for file_name in sorted(os.listdir(input_dir)):
