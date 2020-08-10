@@ -33,6 +33,34 @@ def listing(pause, max_retry, input_path, output_path):
     )
 
 
+@rent.command()
+@click.option('--pause', '-p', default=10)
+@click.option('--max_retry', '-m', default=10)
+@click.option('--prefix', '-P', default='rent_')
+@click.option('--input_dir', '-i', default=os.getcwd())
+@click.option('--output_dir', '-o', default=os.getcwd())
+def listing_batch(pause, max_retry, prefix, input_dir, output_dir):
+    input_file_names = []
+
+    for file_name in sorted(os.listdir(input_dir)):
+        if (file_name.startswith(prefix)
+                and file_name.endswith('.pkl')):
+            input_file_names.append(file_name)
+
+    for index, input_file_name in enumerate(input_file_names, start=1):
+        output_file_name = '{}.csv'.format(
+            os.path.splitext(input_file_name)[0])
+
+        scrape_rent_listing_data_to_csv(
+            pause=pause,
+            max_retry=max_retry,
+            input_path=os.path.join(input_dir, input_file_name),
+            output_path=os.path.join(output_dir, output_file_name),
+            file_count=len(input_file_names),
+            file_counter=index
+        )
+
+
 def scrape_rent_listing_data_to_csv(
         pause,
         max_retry,
