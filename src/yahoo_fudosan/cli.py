@@ -230,6 +230,9 @@ def scrape_rent_listing_data_to_csv(
                 print('Terminating...')
                 break
 
+            if not rent_listing.is_target_listing_available():
+                continue
+
             CsvExporter.export_listing_data_to_csv(
                 input_data=rent_listing.extract_rent_data(),
                 output_path=output_path

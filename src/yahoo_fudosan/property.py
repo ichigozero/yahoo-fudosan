@@ -58,3 +58,15 @@ class PropertyListing:
             return '表示できません' in h1_text
         except AttributeError:
             return False
+
+    def is_target_listing_available(self):
+        try:
+            p_text = (
+                self._soup
+                .find('div', class_='contents')
+                .find('p')
+                .get_text(strip=True)
+            )
+            return '掲載終了または削除されました' not in p_text
+        except AttributeError:
+            return False
