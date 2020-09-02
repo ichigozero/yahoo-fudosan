@@ -23,6 +23,16 @@ def dummy_url():
 
 
 @pytest.fixture(scope='module')
+def error_page_html():
+    return test_file('error_page.html').encode('utf-8')
+
+
+@pytest.fixture(scope='module')
+def listing_removed_html():
+    return test_file('listing_removed.html').encode('utf-8')
+
+
+@pytest.fixture(scope='module')
 def rent_listing_html():
     return test_file('rent_listing.html').encode('utf-8')
 
