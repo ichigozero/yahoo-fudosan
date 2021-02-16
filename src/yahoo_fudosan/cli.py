@@ -1,5 +1,8 @@
 import csv
+import logging
+import logging.config
 import os
+import sys
 import time
 import pickle
 import urllib.parse
@@ -13,6 +16,12 @@ from .csv import CsvExporter
 
 
 HOSTNAME = 'https://realestate.yahoo.co.jp'
+
+logging.config.fileConfig(
+    os.path.join(os.path.dirname(__file__), 'logging.ini'),
+    disable_existing_loggers=False
+)
+logger = logging.getLogger(__name__)
 
 
 @click.group()
@@ -218,25 +227,31 @@ def scrape_rent_listing_data_to_csv(
         rent_listing = RentListing()
 
         for index, target_url in enumerate(target_urls[start_index:]):
-            rent_listing.get_soup(target_url)
-
-            error_occured = (
-                rent_listing._soup is None or
-                rent_listing.is_fetched_page_an_error_page()
+            rent_listing.get_soup(
+                url=target_url,
+                max_retry=max_retry,
+                retry_delay=pause
             )
 
-            if error_occured:
-                print('Unable to scrape {}'.format(target_url))
-                print('Terminating...')
+            if rent_listing._soup is None:
                 break
 
-            if not rent_listing.is_target_listing_available():
-                continue
+            # When a lot of requests send in a short time span
+            # the server will return an error page instead of
+            # the actual listing page.
+            if rent_listing.is_fetched_page_an_error_page():
+                logger.error('Too many connections from your IP!')
+                sys.exit(1)
 
-            CsvExporter.export_listing_data_to_csv(
-                input_data=rent_listing.extract_rent_data(),
-                output_path=output_path
-            )
+            if rent_listing.is_target_listing_available():
+                CsvExporter.export_listing_data_to_csv(
+                    input_data=rent_listing.extract_rent_data(),
+                    output_path=output_path
+                )
+                logger.info('Rent listing has been exported')
+            else:
+                logger.warning('Rent listing not available')
+
             bar.update(1)
 
             if index != len(target_urls) - 1:

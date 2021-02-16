@@ -1,8 +1,12 @@
+import logging
+import logging.config
 import requests
 import time
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
+
+logger = logging.getLogger(__name__)
 
 
 class PropertySearch:
@@ -39,18 +43,31 @@ class PropertyListing:
 
     def get_soup(self, url, retry_count=0, max_retry=0, retry_delay=0):
         try:
-            content = requests.get(url).content
+            content = requests.get(url, timeout=10).content
             self._soup = BeautifulSoup(content, 'html.parser')
+            self._requested_url = url
+            logger.info('Fetched %s', url)
         except requests.exceptions.RequestException:
             if retry_count < max_retry:
+                if retry_count == 0:
+                    logger.warning('Attempting to refetch %s', url)
+
+                logger.warning(
+                    'Refetch attempt %d of %d',
+                    retry_count + 1,
+                    max_retry
+                )
                 time.sleep(retry_delay)
                 self.get_soup(url, retry_count + 1, max_retry, retry_delay)
             else:
                 # Prevent scraping same page
                 # if subsequent URL requests fail
                 self._soup = None
+                self._requested_url = url
 
-        self._requested_url = url
+                logger.error('Unable to fetch the page')
+                logger.error('The maximum retry count has been exceeded')
+
 
     def is_fetched_page_an_error_page(self):
         try:

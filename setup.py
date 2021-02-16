@@ -9,6 +9,9 @@ setup(
     author_email='gary.sentosa@gmail.com',
     packages=find_packages(where='src'),
     package_dir={'': 'src'},
+    package_data={
+        '': ['logging.ini'],
+    },
     install_requires=[
         'beautifulsoup4',
         'click',
