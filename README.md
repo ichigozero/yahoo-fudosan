@@ -1,5 +1,5 @@
 # About
-Scraping tool for [Yahoo!不動産](https://realestate.yahoo.co.jp/)
+Scraping tool for [Yahoo!不動産](https://realestate.yahoo.co.jp/).
 
 # Requirements
 This tool has been tested in environment with the following configuration:
@@ -19,6 +19,9 @@ This tool has been tested in environment with the following configuration:
 # Usage
 
 ## Scraping rental page URLs for given prefecture in batch
+The following command will scrape rental page URLS for certain prefecture.
+The scraped URLs will be outputted into pickle formatted files with filename
+`rent_<city_name>.pkl` (e.g. rent_千代田区.pkl).
 
 ```bash
    $ yahoo_fudosan rent listing-urls-batch [OPTIONS] RENT_CATEGORY_SEARCH_URL
